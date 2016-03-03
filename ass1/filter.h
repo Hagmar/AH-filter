@@ -2,7 +2,7 @@
 #define FITLER_H
 
 void processStream(std::istream&);
-void processFile(std::string const& filename);
-int filter(int argc, char** argv, void (*process)(std::string));
+int processFile(std::string const&);
+int filter(int, char**, void (*)(std::string));
 
 #endif

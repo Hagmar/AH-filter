@@ -4,35 +4,33 @@
 
 int returnCode = 0;
 
-void process(std::istream& stream){
+void processStream(std::istream& stream, void (*process)(std::string)){
 	std::string line;
 	while (getline(stream, line)){
 		std::cout << line << std::endl;
 	}
 }
 
-void processFile( std::string const& filename )
-{
+void processFile( std::string const& filename, void (*process)(std::string) ) {
     if ( filename == "-" ) {
-        process( std::cin );
+        processStream( std::cin, process );
     } else {
         std::ifstream in( filename.c_str() );
         if ( !in.is_open() ) {
             std::cerr << "Error: cannot open " << filename << std::endl;
             returnCode = 1;
         } else {
-            process( in );
+            processStream( in, process );
         }
     }
 }
 
-int main( int argc, char** argv )
-{
+int filter( int argc, char** argv, void (*process)(std::string) ) {
     if ( argc == 1 ) {
-        processFile( "-" );
+        processFile( "-", process );
     } else {
-        for ( int i = 1; i != argc; ++ i ) {
-            processFile( argv[i] );
+        for ( int i = 1; i != argc; i++ ) {
+            processFile( argv[i], process );
         }
     }
     std::cout.flush();

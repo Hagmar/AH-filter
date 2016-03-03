@@ -1,12 +1,19 @@
 #include <iostream>
 #include <fstream>
+#include "filter.h"
 
 int returnCode = 0;
 
 void process(std::istream& stream){
-	std::string a;
-	stream >> a;
-	std::cout << a << std::endl;
+	char line[50];
+	std::string line2;
+	while (getline(stream, line2)){
+		//stream.get(line, 50);
+		std::cout << line2 << std::endl;
+	}
+	//std::string a;
+	//stream >> a;
+	//std::cout << a << std::endl;
 }
 
 void processFile( std::string const& filename )

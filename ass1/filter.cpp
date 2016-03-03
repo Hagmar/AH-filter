@@ -5,15 +5,10 @@
 int returnCode = 0;
 
 void process(std::istream& stream){
-	char line[50];
-	std::string line2;
-	while (getline(stream, line2)){
-		//stream.get(line, 50);
-		std::cout << line2 << std::endl;
+	std::string line;
+	while (getline(stream, line)){
+		std::cout << line << std::endl;
 	}
-	//std::string a;
-	//stream >> a;
-	//std::cout << a << std::endl;
 }
 
 void processFile( std::string const& filename )
@@ -23,7 +18,6 @@ void processFile( std::string const& filename )
     } else {
         std::ifstream in( filename.c_str() );
         if ( !in.is_open() ) {
-            //std::cerr << argv[0] << ": cannot open " << filename << std::endl;
             std::cerr << "Error: cannot open " << filename << std::endl;
             returnCode = 1;
         } else {

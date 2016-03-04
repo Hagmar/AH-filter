@@ -1,6 +1,6 @@
 #include <iostream>
 #include "filter.h"
-#include "ahencode.h"
+#include "ahdecode.h"
 
 int returnCode = 0;
 

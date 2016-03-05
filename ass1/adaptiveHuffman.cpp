@@ -6,6 +6,7 @@ class AdaptiveHuffmanModel {
         public:
             int weight;
             char symbol;
+            Node* parent;
             Node* lchild;
             Node* rchild;
 
@@ -15,15 +16,20 @@ class AdaptiveHuffmanModel {
     };
     private:
         Node* root;
+        Node* nyt;
     public:
         AdaptiveHuffmanModel();
         ~AdaptiveHuffmanModel();
 
+        bool newSymbol(char);
+        Node* splitNYT();
+        Node* findNode(char);
         std::string encode(char);
 };
 
 AdaptiveHuffmanModel::AdaptiveHuffmanModel() {
     root = new Node;
+    nyt = root;
     std::cout << "Model created" << std::endl;
 }
 
@@ -52,6 +58,28 @@ AdaptiveHuffmanModel::Node::~Node(){
     }
     std::cout << "Node destroyed" << std::endl;
 }
+
+AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::splitNYT() {
+    Node* newLeaf = new Node();
+    nyt->rchild = newLeaf;
+    nyt->lchild = new Node();
+    nyt = nyt->lchild;
+    return newLeaf;
+}
+
+std::string AdaptiveHuffmanModel::encode(char c) {
+    Node* currNode;
+    if (newSymbol(c)){
+        Node* newNode = splitNYT();
+        newNode->weight = 1;
+        currNode = newNode->parent;
+        currNode->weight += 1;
+    } else {
+        currNode = findNode(c);
+    }
+
+    return "hi";
+ }
 
 int main(int argc, char** argv){
     AdaptiveHuffmanModel* a = new AdaptiveHuffmanModel;

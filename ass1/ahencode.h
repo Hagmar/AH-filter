@@ -4,4 +4,4 @@
 void process(std::string line);
 int main(int argc, char** argv);
 
-#define AHENCODE_H
+#endif

@@ -6,6 +6,7 @@ class AdaptiveHuffmanModel {
         public:
             int weight;
             char symbol;
+            unsigned char number;
             Node* parent;
             Node* lchild;
             Node* rchild;
@@ -24,12 +25,14 @@ class AdaptiveHuffmanModel {
         bool newSymbol(char);
         Node* splitNYT();
         Node* findNode(char);
+        Node* findMaxInBlock(int);
         std::string encode(char);
 };
 
 AdaptiveHuffmanModel::AdaptiveHuffmanModel() {
     root = new Node;
     nyt = root;
+    root->number = 255;
     std::cout << "Model created" << std::endl;
 }
 
@@ -62,22 +65,63 @@ AdaptiveHuffmanModel::Node::~Node(){
 AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::splitNYT() {
     Node* newLeaf = new Node();
     nyt->rchild = newLeaf;
+    newLeaf->number = nyt->number-1;
     nyt->lchild = new Node();
+    nyt->lchild->number = nyt->number-2;
     nyt = nyt->lchild;
     return newLeaf;
+}
+
+AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findMaxInBlock(int weight){
+    return findMaxInBlockRecursive(weight, root, 0);
+}
+
+//UNTESTED
+AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findMaxInBlockRecursive(int weight, AdaptiveHuffmanModel::Node* currNode, int bestNum){
+    if (!currNode){
+        return NULL;
+    }
+
+    if (currNode->weight == weight){
+        return currNode;
+    } else if (currNode->weight < weight || currNode->number < bestNum){
+        return NULL;
+    }
+
+    Node* returnNode = NULL;
+    Node* rightNode = findMaxInBlockRecursive(weight, currNode->rchild, bestNum);
+    if (rightNode){
+        if (rightNode->number > bestNum){
+            returnNode = rightNode;
+            bestNum = rightNode->number;
+        }
+    }
+
+    Node* leftNode = findMaxInBlockRecursive(weight, currNode->lchild, bestNum);
+    if (leftNode){
+        if (leftNode->number > bestNum){
+            return leftNode;
+        }
+    }
+
+    return returnNode;
 }
 
 std::string AdaptiveHuffmanModel::encode(char c) {
     Node* currNode;
     if (newSymbol(c)){
-        Node* newNode = splitNYT();
-        newNode->weight = 1;
-        currNode = newNode->parent;
-        currNode->weight += 1;
+        Node* newLeaf = splitNYT();
+        newLeaf->weight = 1;
+        newLeaf->symbol = c;
+        currNode = newLeaf->parent;
+        currNode->weight = 1;
     } else {
         currNode = findNode(c);
     }
 
+    while (currNode != root){
+        currNode = currNode->parent;
+    }
     return "hi";
  }
 

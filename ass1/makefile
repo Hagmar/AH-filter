@@ -2,7 +2,7 @@ CC=g++
 
 all: ahencode ahdecode
 
-ahencode: ahencode.cpp ahencode.h filter.o
+ahencode: ahencode.cpp ahencode.h filter.o adaptiveHuffman.o
 	$(CC) -o ahencode ahencode.cpp filter.o
 
 ahdecode: ahdecode.cpp ahdecode.h filter.o
@@ -10,6 +10,9 @@ ahdecode: ahdecode.cpp ahdecode.h filter.o
 
 filter.o: filter.cpp filter.h
 	$(CC) -c filter.cpp
+
+adaptiveHuffman.o: adaptiveHuffman.cpp adaptiveHuffman.h
+	$(CC) -c adaptiveHuffman.cpp
 
 clean:
 	rm *.o

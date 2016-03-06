@@ -26,6 +26,8 @@ class AdaptiveHuffmanModel {
         Node* splitNYT();
         Node* findNode(char);
         Node* findMaxInBlock(int);
+        Node* findMaxInBlockRecursive(int, Node*, int);
+        void switchNodes(Node*, Node*);
         std::string encode(char);
 };
 
@@ -107,6 +109,11 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findMaxInBlockRecursive(int we
     return returnNode;
 }
 
+//TODO
+void AdaptiveHuffmanModel::switchNodes(Node* node1, Node* node2){
+    return;
+}
+
 std::string AdaptiveHuffmanModel::encode(char c) {
     Node* currNode;
     if (newSymbol(c)){
@@ -119,8 +126,14 @@ std::string AdaptiveHuffmanModel::encode(char c) {
         currNode = findNode(c);
     }
 
+    Node* maxBlockNode;
     while (currNode != root){
         currNode = currNode->parent;
+        maxBlockNode = findMaxInBlock(currNode->weight);
+        if (currNode != maxBlockNode){
+            switchNodes(currNode, maxBlockNode);
+        }
+        currNode->weight++;
     }
     return "hi";
  }

@@ -109,9 +109,44 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findMaxInBlockRecursive(int we
     return returnNode;
 }
 
-//TODO
+// TODO untested
+// Switches the position of two nodes, while leaving the numbering intact
 void AdaptiveHuffmanModel::switchNodes(Node* node1, Node* node2){
-    return;
+    int tempNum = node1->number;
+    Node* tempParent = node1->parent;
+
+    node1->number = node2->number;
+    node1->parent = node2->parent;
+    if (node1->parent->lchild == node2){
+        node1->parent->lchild = node1;
+    } else {
+        node1->parent->rchild = node1;
+    }
+
+    node2->number = tempNum;
+    node2->parent = tempParent;
+    if (tempParent->lchild == node1){
+        tempParent->lchild = node2;
+    } else {
+        tempParent->rchild = node2;
+    }
+}
+
+// TODO untested
+// Switches nodes by swapping children and symbol
+// In effect switches the pointers
+void AdaptiveHuffmanModel::switchNodes2(Node* node1, Node* node2){
+    char tempSymbol = node1->symbol;
+    Node* tempLChild = node1->lchild;
+    Node* tempRChild = node1->rchild;
+
+    node1->symbol = node2->symbol;
+    node1->lchild = node2->lchild;
+    node1->rchild = node2->rchild;
+
+    node2->symbol = tempSymbol;
+    node2->lchild = tempLChild;
+    node2->rchild = tempRChild;
 }
 
 std::string AdaptiveHuffmanModel::encode(char c) {

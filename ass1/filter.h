@@ -1,8 +1,15 @@
 #ifndef FILTER_H
 #define FITLER_H
 
-void processStream(std::istream&);
-int processFile(std::string const&);
-int filter(int, char**, void (*)(std::string));
+class Filter {
+    private:
+        void processFile(std::string const&);
+        void processStream(std::istream&);
+
+        virtual void process(std::string) = 0;
+
+    public:
+        void filter(int, char**);
+};
 
 #endif

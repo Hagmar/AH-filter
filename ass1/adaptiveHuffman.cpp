@@ -34,6 +34,11 @@ AdaptiveHuffmanModel::Node::~Node(){
     std::cout << "Node destroyed" << std::endl;
 }
 
+// TODO
+bool AdaptiveHuffmanModel::newSymbol(char c){
+    return false;
+}
+
 AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::splitNYT() {
     Node* newLeaf = new Node();
     nyt->rchild = newLeaf;
@@ -42,6 +47,11 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::splitNYT() {
     nyt->lchild->number = nyt->number-2;
     nyt = nyt->lchild;
     return newLeaf;
+}
+
+// TODO
+AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findNode(char c){
+    return NULL;
 }
 
 AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findMaxInBlock(int weight){
@@ -119,32 +129,42 @@ void AdaptiveHuffmanModel::switchNodes2(Node* node1, Node* node2){
     node2->rchild = tempRChild;
 }
 
+AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::addSymbol(char c){
+    Node* newLeaf = splitNYT();
+    newLeaf->weight = 1;
+    newLeaf->symbol = c;
+
+    newLeaf->parent->weight = 1;
+    return newLeaf->parent;
+}
+
+void AdaptiveHuffmanModel::blockSwitch(Node* node){
+    Node* maxBlockNode = findMaxInBlock(node->weight);
+    if (node != maxBlockNode){
+        switchNodes(node, maxBlockNode);
+    }
+    node->weight++;
+}
+
 std::string AdaptiveHuffmanModel::encode(char c) {
     Node* currNode;
     if (newSymbol(c)){
-        Node* newLeaf = splitNYT();
-        newLeaf->weight = 1;
-        newLeaf->symbol = c;
-        currNode = newLeaf->parent;
-        currNode->weight = 1;
+        currNode = addSymbol(c);
     } else {
         currNode = findNode(c);
+        blockSwitch(currNode);
     }
 
-    Node* maxBlockNode;
     while (currNode != root){
         currNode = currNode->parent;
-        maxBlockNode = findMaxInBlock(currNode->weight);
-        if (currNode != maxBlockNode){
-            switchNodes(currNode, maxBlockNode);
-        }
-        currNode->weight++;
+        blockSwitch(currNode);
     }
     return "hi";
  }
 
 int main(int argc, char** argv){
     AdaptiveHuffmanModel* a = new AdaptiveHuffmanModel;
-    std::cout << "tjenna" << std::endl;
+    std::cout << "aoeu" << std::endl;
+    //std::cout << a->encode('a') << std::endl;
     return 0;
 }

@@ -1,5 +1,5 @@
 #ifndef FILTER_H
-#define FITLER_H
+#define FILTER_H
 
 class Filter {
     private:

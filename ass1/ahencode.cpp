@@ -7,6 +7,8 @@ void AHEncodeFilter::process(std::string line){
 }
 
 int main( int argc, char** argv ) {
+    AHEncodeFilter* filter = new AHEncodeFilter();
+    filter->filter(argc, argv);
 	std::cout.flush();
     return 0;
 }

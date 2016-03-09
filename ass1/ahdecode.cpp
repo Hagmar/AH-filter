@@ -2,14 +2,13 @@
 #include "filter.h"
 #include "ahdecode.h"
 
-int returnCode = 0;
-
-void process(std::string line){
+void AHDecodeFilter::process(std::string line){
     std::cout << line << std::endl;
 }
 
 int main( int argc, char** argv ) {
-	filter(argc, argv, &process);
+    AHDecodeFilter* filter = new AHDecodeFilter;
+    filter->filter(argc, argv);
 	std::cout.flush();
-	return std::cout ? returnCode : 2;
+    return 0;
 }

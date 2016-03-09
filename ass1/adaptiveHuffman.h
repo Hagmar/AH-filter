@@ -28,6 +28,7 @@ class AdaptiveHuffmanModel {
         Node* findMaxInBlock(int);
         Node* findMaxInBlockRecursive(int, Node*, int);
         void switchNodes(Node*, Node*);
+        void switchNodes2(Node*, Node*);
         std::string encode(char);
 };
 

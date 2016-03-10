@@ -23,17 +23,18 @@ class AdaptiveHuffmanModel {
         Node* findNode(char);
         Node* findNodeRecursive(char, Node*);
         Node* splitNYT();
+        void blockSwitch(Node*);
         void switchNodes(Node*, Node*);
         void switchNodes2(Node*, Node*);
+        Node* findMaxInBlock(int);
         Node* findMaxInBlockRecursive(int, Node*, int);
     public:
         AdaptiveHuffmanModel();
         ~AdaptiveHuffmanModel();
 
-        Node* findMaxInBlock(int);
         Node* addSymbol(char);
-        void blockSwitch(Node*);
         std::string encode(char);
+        void updateModel(char);
 };
 
 #endif

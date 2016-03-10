@@ -21,6 +21,7 @@ AdaptiveHuffmanModel::Node::Node(int w) {
     weight = w;
     lchild = NULL;
     rchild = NULL;
+    parent = NULL;
     std::cout << "Node created" << std::endl;
 }
 
@@ -166,7 +167,26 @@ void AdaptiveHuffmanModel::blockSwitch(Node* node){
     node->weight++;
 }
 
-std::string AdaptiveHuffmanModel::encode(char c) {
+std::string AdaptiveHuffmanModel::encode(char c){
+    std::string output = "";
+    Node* node = findNode(c);
+    if (!node){
+        output = c;
+    } else {
+        while (node != root){
+            if (node == node->parent->rchild){
+                output = "0" + output;
+            } else {
+                output = "1" + output;
+            }
+            node = node->parent;
+        }
+    }
+
+    return output;
+}
+
+void AdaptiveHuffmanModel::updateModel(char c) {
     Node* currNode = findNode(c);
     if (!currNode){
         currNode = addSymbol(c);
@@ -178,13 +198,14 @@ std::string AdaptiveHuffmanModel::encode(char c) {
         currNode = currNode->parent;
         blockSwitch(currNode);
     }
-    return "hi";
  }
 
 int main(int argc, char** argv){
     AdaptiveHuffmanModel* a = new AdaptiveHuffmanModel;
     std::cout << a->encode('a') << std::endl;
     std::cout << a->encode('a') << std::endl;
+    a->updateModel('a');
+    a->updateModel('b');
     std::cout << a->encode('a') << std::endl;
     std::cout << a->encode('a') << std::endl;
     std::cout << a->encode('a') << std::endl;

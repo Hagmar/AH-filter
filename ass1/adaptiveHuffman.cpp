@@ -42,6 +42,7 @@ bool AdaptiveHuffmanModel::newSymbol(char c){
 AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::splitNYT() {
     Node* newLeaf = new Node();
     nyt->rchild = newLeaf;
+    newLeaf->parent = nyt;
     newLeaf->number = nyt->number-1;
     nyt->lchild = new Node();
     nyt->lchild->number = nyt->number-2;
@@ -49,9 +50,24 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::splitNYT() {
     return newLeaf;
 }
 
-// TODO
 AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findNode(char c){
-    return NULL;
+    return findNodeRecursive(c, root);
+}
+
+AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findNodeRecursive(char c, AdaptiveHuffmanModel::Node* node){
+    if (!node){
+        return NULL;
+    }
+
+    if (node->symbol == c){
+        return node;
+    }
+    
+    Node* returnNode = findNodeRecursive(c, node->rchild);
+    if (returnNode){
+        return returnNode;
+    }
+    return findNodeRecursive(c, node->lchild);
 }
 
 AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findMaxInBlock(int weight){
@@ -122,11 +138,15 @@ void AdaptiveHuffmanModel::switchNodes2(Node* node1, Node* node2){
 
     node1->symbol = node2->symbol;
     node1->lchild = node2->lchild;
+    node1->lchild->parent = node1;
     node1->rchild = node2->rchild;
+    node1->rchild->parent = node1;
 
     node2->symbol = tempSymbol;
     node2->lchild = tempLChild;
+    node2->lchild->parent = node2;
     node2->rchild = tempRChild;
+    node2->rchild->parent = node2;
 }
 
 AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::addSymbol(char c){
@@ -140,18 +160,17 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::addSymbol(char c){
 
 void AdaptiveHuffmanModel::blockSwitch(Node* node){
     Node* maxBlockNode = findMaxInBlock(node->weight);
-    if (node != maxBlockNode){
+    if (node != maxBlockNode && maxBlockNode != node->parent){
         switchNodes(node, maxBlockNode);
     }
     node->weight++;
 }
 
 std::string AdaptiveHuffmanModel::encode(char c) {
-    Node* currNode;
-    if (newSymbol(c)){
+    Node* currNode = findNode(c);
+    if (!currNode){
         currNode = addSymbol(c);
     } else {
-        currNode = findNode(c);
         blockSwitch(currNode);
     }
 
@@ -164,7 +183,10 @@ std::string AdaptiveHuffmanModel::encode(char c) {
 
 int main(int argc, char** argv){
     AdaptiveHuffmanModel* a = new AdaptiveHuffmanModel;
-    std::cout << "aoeu" << std::endl;
-    //std::cout << a->encode('a') << std::endl;
+    std::cout << a->encode('a') << std::endl;
+    std::cout << a->encode('a') << std::endl;
+    std::cout << a->encode('a') << std::endl;
+    std::cout << a->encode('a') << std::endl;
+    std::cout << a->encode('a') << std::endl;
     return 0;
 }

@@ -4,10 +4,10 @@
 class AdaptiveHuffmanModel {
     class Node {
         private:
-            void Construct(int);
+            void Construct(unsigned int);
 
         public:
-            int weight;
+            unsigned int weight;
             char symbol;
             unsigned char number;
             Node* parent;
@@ -15,7 +15,7 @@ class AdaptiveHuffmanModel {
             Node* rchild;
 
             Node();
-            Node(int);
+            Node(unsigned int);
             ~Node();
     };
     private:
@@ -28,8 +28,8 @@ class AdaptiveHuffmanModel {
         void blockSwitch(Node*);
         void switchNodes(Node*, Node*);
         void switchNodes2(Node*, Node*);
-        Node* findMaxInBlock(int);
-        Node* findMaxInBlockRecursive(int, Node*, int);
+        Node* findMaxInBlock(unsigned int);
+        Node* findMaxInBlockRecursive(unsigned int, Node*, unsigned char);
     public:
         AdaptiveHuffmanModel();
         ~AdaptiveHuffmanModel();

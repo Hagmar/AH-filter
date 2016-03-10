@@ -17,11 +17,11 @@ AdaptiveHuffmanModel::Node::Node() {
     Construct(0);
 }
 
-AdaptiveHuffmanModel::Node::Node(int w) {
+AdaptiveHuffmanModel::Node::Node(unsigned int w) {
     Construct(w);
 }
 
-void AdaptiveHuffmanModel::Node::Construct(int w) {
+void AdaptiveHuffmanModel::Node::Construct(unsigned int w) {
     weight = w;
     lchild = NULL;
     rchild = NULL;
@@ -71,12 +71,12 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findNodeRecursive(char c, Adap
     return findNodeRecursive(c, node->lchild);
 }
 
-AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findMaxInBlock(int weight){
+AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findMaxInBlock(unsigned int weight){
     return findMaxInBlockRecursive(weight, root, 0);
 }
 
 //UNTESTED
-AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findMaxInBlockRecursive(int weight, AdaptiveHuffmanModel::Node* currNode, int bestNum){
+AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findMaxInBlockRecursive(unsigned int weight, AdaptiveHuffmanModel::Node* currNode, unsigned char bestNum){
     if (!currNode){
         return NULL;
     }
@@ -106,10 +106,9 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findMaxInBlockRecursive(int we
     return returnNode;
 }
 
-// TODO untested
 // Switches the position of two nodes, while leaving the numbering intact
 void AdaptiveHuffmanModel::switchNodes(Node* node1, Node* node2){
-    int tempNum = node1->number;
+    unsigned char tempNum = node1->number;
     Node* tempParent = node1->parent;
 
     node1->number = node2->number;
@@ -129,7 +128,6 @@ void AdaptiveHuffmanModel::switchNodes(Node* node1, Node* node2){
     }
 }
 
-// TODO untested
 // Switches nodes by swapping children and symbol
 // In effect switches the pointers
 void AdaptiveHuffmanModel::switchNodes2(Node* node1, Node* node2){
@@ -194,7 +192,7 @@ void AdaptiveHuffmanModel::updateModel(char c) {
         currNode = currNode->parent;
         blockSwitch(currNode);
     }
- }
+}
 
 int main(int argc, char** argv){
     AdaptiveHuffmanModel* a = new AdaptiveHuffmanModel;

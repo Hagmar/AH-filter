@@ -2,7 +2,7 @@
 #include "adaptiveHuffman.h"
 
 AdaptiveHuffmanModel::AdaptiveHuffmanModel() {
-    root = new Node;
+    root = new Node();
     nyt = root;
     root->number = 255;
     std::cout << "Model created" << std::endl;
@@ -14,11 +14,7 @@ AdaptiveHuffmanModel::~AdaptiveHuffmanModel() {
 }
 
 AdaptiveHuffmanModel::Node::Node() {
-    Node(0);
-}
-
-AdaptiveHuffmanModel::Node::Node(int w) {
-    weight = w;
+    weight = 0;
     lchild = NULL;
     rchild = NULL;
     parent = NULL;
@@ -47,6 +43,7 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::splitNYT() {
     newLeaf->number = nyt->number-1;
     nyt->lchild = new Node();
     nyt->lchild->number = nyt->number-2;
+    nyt->lchild->parent = nyt;
     nyt = nyt->lchild;
     return newLeaf;
 }

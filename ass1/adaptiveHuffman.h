@@ -3,6 +3,9 @@
 
 class AdaptiveHuffmanModel {
     class Node {
+        private:
+            void Construct(int);
+
         public:
             int weight;
             char symbol;
@@ -19,7 +22,6 @@ class AdaptiveHuffmanModel {
         Node* root;
         Node* nyt;
 
-        bool newSymbol(char);
         Node* findNode(char);
         Node* findNodeRecursive(char, Node*);
         Node* splitNYT();

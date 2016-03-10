@@ -14,7 +14,15 @@ AdaptiveHuffmanModel::~AdaptiveHuffmanModel() {
 }
 
 AdaptiveHuffmanModel::Node::Node() {
-    weight = 0;
+    Construct(0);
+}
+
+AdaptiveHuffmanModel::Node::Node(int w) {
+    Construct(w);
+}
+
+void AdaptiveHuffmanModel::Node::Construct(int w) {
+    weight = w;
     lchild = NULL;
     rchild = NULL;
     parent = NULL;
@@ -29,11 +37,6 @@ AdaptiveHuffmanModel::Node::~Node(){
         delete rchild;
     }
     std::cout << "Node destroyed" << std::endl;
-}
-
-// TODO
-bool AdaptiveHuffmanModel::newSymbol(char c){
-    return false;
 }
 
 AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::splitNYT() {
@@ -171,11 +174,7 @@ std::string AdaptiveHuffmanModel::encode(char c){
         output = c;
     } else {
         while (node != root){
-            if (node == node->parent->rchild){
-                output = "0" + output;
-            } else {
-                output = "1" + output;
-            }
+            output = (node == node->parent->rchild) ? "1" + output : "0" + output;
             node = node->parent;
         }
     }
@@ -200,11 +199,24 @@ void AdaptiveHuffmanModel::updateModel(char c) {
 int main(int argc, char** argv){
     AdaptiveHuffmanModel* a = new AdaptiveHuffmanModel;
     std::cout << a->encode('a') << std::endl;
-    std::cout << a->encode('a') << std::endl;
     a->updateModel('a');
+    std::cout << a->encode('b') << std::endl;
+    a->updateModel('b');
+    std::cout << a->encode('b') << std::endl;
+    a->updateModel('b');
+    std::cout << a->encode('b') << std::endl;
+    a->updateModel('b');
+    std::cout << a->encode('b') << std::endl;
+    a->updateModel('b');
+    std::cout << a->encode('b') << std::endl;
     a->updateModel('b');
     std::cout << a->encode('a') << std::endl;
+    a->updateModel('a');
     std::cout << a->encode('a') << std::endl;
+    a->updateModel('a');
     std::cout << a->encode('a') << std::endl;
+    a->updateModel('a');
+
+    delete a;
     return 0;
 }

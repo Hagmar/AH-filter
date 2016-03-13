@@ -200,9 +200,44 @@ std::string AdaptiveHuffmanModel::nodeToString(AdaptiveHuffmanModel::Node* node)
     return output;
 }
 
-// TODO
+// TODO Untested
 std::string AdaptiveHuffmanModel::decode(std::string message) {
-    return message;
+    Node* currNode = root;
+    std::string::iterator it = message.begin();
+    std::string decodedMessage = "";
+    unsigned char bitChar;
+    unsigned char decodedChar;
+
+    while (it != message.end()){
+        if (currNode == nyt){
+            decodedChar = 0;
+            for (unsigned char i = 0; i < 8; i++){
+                bitChar = *it++;
+                decodedChar <<= 1;
+                if (bitChar == '1'){
+                    decodedChar += 1;
+                }
+            }
+            decodedMessage += decodedChar;
+            updateModel(decodedChar);
+            currNode = root;
+        } else {
+            bitChar = *it++;
+            if (bitChar == '1'){
+                currNode = currNode->rchild;
+            } else {
+                currNode = currNode->lchild;
+            }
+            if (currNode->symbol){
+                decodedChar = currNode->symbol;
+                decodedMessage += decodedChar;
+                updateModel(decodedChar);
+                currNode = root;
+            }
+        }
+    }
+
+    return decodedMessage;
 }
 
 void AdaptiveHuffmanModel::updateModel(char c) {

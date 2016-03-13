@@ -31,6 +31,7 @@ AdaptiveHuffmanModel::Node::Node(unsigned int w) {
 
 void AdaptiveHuffmanModel::Node::Construct(unsigned int w) {
     weight = w;
+    symbol = 0;
     lchild = NULL;
     rchild = NULL;
     parent = NULL;

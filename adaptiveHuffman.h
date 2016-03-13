@@ -42,6 +42,7 @@ class AdaptiveHuffmanModel {
         ~AdaptiveHuffmanModel();
 
         std::string encode(char);
+        std::string decode(std::string);
         void updateModel(char);
 };
 

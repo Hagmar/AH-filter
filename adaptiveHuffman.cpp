@@ -200,6 +200,11 @@ std::string AdaptiveHuffmanModel::nodeToString(AdaptiveHuffmanModel::Node* node)
     return output;
 }
 
+// TODO
+std::string AdaptiveHuffmanModel::decode(std::string message) {
+    return message;
+}
+
 void AdaptiveHuffmanModel::updateModel(char c) {
     Node* currNode = findNode(c);
     if (!currNode){

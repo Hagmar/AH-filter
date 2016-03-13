@@ -5,12 +5,10 @@ AdaptiveHuffmanModel::AdaptiveHuffmanModel() {
     root = new Node();
     nyt = root;
     root->number = 255;
-    std::cout << "Model created" << std::endl;
 }
 
 AdaptiveHuffmanModel::~AdaptiveHuffmanModel() {
     delete root;
-    std::cout << "Model destroyed" << std::endl;
 }
 
 AdaptiveHuffmanModel::Node::Node() {
@@ -26,7 +24,6 @@ void AdaptiveHuffmanModel::Node::Construct(unsigned int w) {
     lchild = NULL;
     rchild = NULL;
     parent = NULL;
-    std::cout << "Node created" << std::endl;
 }
 
 AdaptiveHuffmanModel::Node::~Node(){
@@ -36,7 +33,6 @@ AdaptiveHuffmanModel::Node::~Node(){
     if (rchild) {
         delete rchild;
     }
-    std::cout << "Node destroyed" << std::endl;
 }
 
 AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::splitNYT() {
@@ -192,29 +188,4 @@ void AdaptiveHuffmanModel::updateModel(char c) {
         currNode = currNode->parent;
         blockSwitch(currNode);
     }
-}
-
-int main(int argc, char** argv){
-    AdaptiveHuffmanModel* a = new AdaptiveHuffmanModel;
-    std::cout << a->encode('a') << std::endl;
-    a->updateModel('a');
-    std::cout << a->encode('b') << std::endl;
-    a->updateModel('b');
-    std::cout << a->encode('b') << std::endl;
-    a->updateModel('b');
-    std::cout << a->encode('b') << std::endl;
-    a->updateModel('b');
-    std::cout << a->encode('b') << std::endl;
-    a->updateModel('b');
-    std::cout << a->encode('b') << std::endl;
-    a->updateModel('b');
-    std::cout << a->encode('a') << std::endl;
-    a->updateModel('a');
-    std::cout << a->encode('a') << std::endl;
-    a->updateModel('a');
-    std::cout << a->encode('a') << std::endl;
-    a->updateModel('a');
-
-    delete a;
-    return 0;
 }

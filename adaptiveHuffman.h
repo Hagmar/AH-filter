@@ -19,8 +19,12 @@ class AdaptiveHuffmanModel {
             ~Node();
     };
     private:
+        bool split;
+
         Node* root;
         Node* nyt;
+
+        void Construct(bool);
 
         Node* findNode(char);
         Node* findNodeRecursive(char, Node*);
@@ -34,6 +38,7 @@ class AdaptiveHuffmanModel {
         std::string nodeToString(Node*);
     public:
         AdaptiveHuffmanModel();
+        AdaptiveHuffmanModel(bool);
         ~AdaptiveHuffmanModel();
 
         std::string encode(char);

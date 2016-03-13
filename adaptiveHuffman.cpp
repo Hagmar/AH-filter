@@ -3,6 +3,15 @@
 #include "adaptiveHuffman.h"
 
 AdaptiveHuffmanModel::AdaptiveHuffmanModel() {
+    Construct(false);
+}
+
+AdaptiveHuffmanModel::AdaptiveHuffmanModel(bool s) {
+    Construct(s);
+}
+
+void AdaptiveHuffmanModel::Construct(bool s) {
+    split = s;
     root = new Node();
     nyt = root;
     root->number = 255;
@@ -169,6 +178,9 @@ std::string AdaptiveHuffmanModel::encode(char c){
     if (!node){
         output = nodeToString(nyt);
         std::bitset<8> bs(c);
+        if (split && output != ""){
+            output += " ";
+        }
         output += bs.to_string();
     } else {
         output = nodeToString(node);

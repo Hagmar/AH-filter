@@ -12,15 +12,11 @@ AHEncodeFilter::AHEncodeFilter(bool s) {
 }
 
 void AHEncodeFilter::filter(int argc, char** argv) {
-    if (argc <= 1) {
+    if (argc <= 1 || (split && argc == 2)) {
         processFile("-");
     } else {
-        int i;
-        if (argv[1] == "-s"){
-            i = 2;
-        } else {
-            i=1;
-        }
+        int i = split ? 2 : 1;
+
         for (; i != argc; i++) {
             processFile(argv[i]);
         }
@@ -33,13 +29,25 @@ void AHEncodeFilter::process(std::string line){
 
     std::string::iterator it = line.begin();
     for (; it != line.end(); ++it){
-        std::cout << model->encode(*it) << std::endl;
+        std::cout << model->encode(*it);
         model->updateModel(*it);
+
+        if (split){
+            std::cout << " ";
+        }
     }
+    std::cout << std::endl;
 }
 
 int main( int argc, char** argv ) {
-    AHEncodeFilter* filter = new AHEncodeFilter();
+    bool split = false;
+    if (argc > 1){
+        if (std::string(argv[1]) == "-s"){
+            split = true;
+        }
+    }
+
+    AHEncodeFilter* filter = new AHEncodeFilter(split);
     filter->filter(argc, argv);
 	std::cout.flush();
     return 0;

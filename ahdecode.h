@@ -8,6 +8,12 @@ class AHDecodeFilter: public Filter {
         bool split;
 
         void process(std::string);
+
+    public:
+        AHDecodeFilter();
+        AHDecodeFilter(bool);
+
+        void filter(int, char**);
 };
 
 int main(int argc, char** argv);

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <bitset>
 #include "adaptiveHuffman.h"
 
 AdaptiveHuffmanModel::AdaptiveHuffmanModel() {
@@ -166,7 +167,9 @@ std::string AdaptiveHuffmanModel::encode(char c){
     std::string output = "";
     Node* node = findNode(c);
     if (!node){
-        output = c;
+        output = nodeToString(nyt);
+        std::bitset<8> bs(c);
+        output += bs.to_string();
     } else {
         output = nodeToString(node);
     }

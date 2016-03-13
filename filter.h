@@ -2,7 +2,7 @@
 #define FILTER_H
 
 class Filter {
-    private:
+    protected:
         void processFile(std::string const&);
         void processStream(std::istream&);
 

@@ -32,7 +32,7 @@ void AHEncodeFilter::process(std::string line){
         std::cout << model->encode(*it);
         model->updateModel(*it);
 
-        if (split){
+        if (split && it+1 != line.end()){
             std::cout << " ";
         }
     }

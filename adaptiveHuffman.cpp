@@ -179,9 +179,6 @@ std::string AdaptiveHuffmanModel::encode(char c){
     if (!node){
         output = nodeToString(nyt);
         std::bitset<8> bs(c);
-        if (split && output != ""){
-            output += " ";
-        }
         output += bs.to_string();
     } else {
         output = nodeToString(node);
@@ -226,7 +223,7 @@ std::string AdaptiveHuffmanModel::decode(std::string message) {
             bitChar = *it++;
             if (bitChar == '1'){
                 currNode = currNode->rchild;
-            } else {
+            } else if (bitChar == '0') {
                 currNode = currNode->lchild;
             }
             if (currNode->symbol){

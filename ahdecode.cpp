@@ -24,13 +24,11 @@ void AHDecodeFilter::filter(int argc, char** argv) {
     std::cout.flush();
 }
 
-// TODO obviously
 void AHDecodeFilter::process(std::string line){
     AdaptiveHuffmanModel* model = new AdaptiveHuffmanModel(split);
     std::cout << model->decode(line) << std::endl;
 }
 
-// TODO Is -s allowed for decoder?
 int main( int argc, char** argv ) {
     bool split = false;
     if (argc > 1){

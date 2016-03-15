@@ -198,7 +198,6 @@ std::string AdaptiveHuffmanModel::nodeToString(AdaptiveHuffmanModel::Node* node)
     return output;
 }
 
-// TODO Untested
 std::string AdaptiveHuffmanModel::decode(std::string message) {
     Node* currNode = root;
     std::string::iterator it = message.begin();

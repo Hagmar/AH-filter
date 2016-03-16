@@ -58,11 +58,11 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::splitNYT() {
     return newLeaf;
 }
 
-AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findNode(char c){
+AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findNode(unsigned char c){
     return findNodeRecursive(c, root);
 }
 
-AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findNodeRecursive(char c, AdaptiveHuffmanModel::Node* node){
+AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findNodeRecursive(unsigned char c, AdaptiveHuffmanModel::Node* node){
     if (!node){
         return NULL;
     }
@@ -113,7 +113,7 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findMaxInBlockRecursive(unsign
     return returnNode;
 }
 
-AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::addSymbol(char c){
+AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::addSymbol(unsigned char c){
     Node* newLeaf = splitNYT();
     newLeaf->weight = 1;
     newLeaf->symbol = c;
@@ -147,7 +147,7 @@ void AdaptiveHuffmanModel::switchNodes(Node* node1, Node* node2){
 // Switches nodes by swapping children and symbol
 // In effect switches the pointers
 void AdaptiveHuffmanModel::switchNodes2(Node* node1, Node* node2){
-    char tempSymbol = node1->symbol;
+    unsigned char tempSymbol = node1->symbol;
     Node* tempLChild = node1->lchild;
     Node* tempRChild = node1->rchild;
 
@@ -173,7 +173,7 @@ void AdaptiveHuffmanModel::blockSwitch(Node* node){
     node->weight++;
 }
 
-std::string AdaptiveHuffmanModel::encode(char c){
+std::string AdaptiveHuffmanModel::encode(unsigned char c){
     std::string output = "";
     Node* node = findNode(c);
     if (!node){
@@ -237,7 +237,7 @@ std::string AdaptiveHuffmanModel::decode(std::string message) {
     return decodedMessage;
 }
 
-void AdaptiveHuffmanModel::updateModel(char c) {
+void AdaptiveHuffmanModel::updateModel(unsigned char c) {
     Node* currNode = findNode(c);
     if (!currNode){
         currNode = addSymbol(c);

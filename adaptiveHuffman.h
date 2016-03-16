@@ -8,7 +8,7 @@ class AdaptiveHuffmanModel {
 
         public:
             unsigned int weight;
-            char symbol;
+            unsigned char symbol;
             unsigned char number;
             Node* parent;
             Node* lchild;
@@ -26,10 +26,10 @@ class AdaptiveHuffmanModel {
 
         void Construct(bool);
 
-        Node* findNode(char);
-        Node* findNodeRecursive(char, Node*);
+        Node* findNode(unsigned char);
+        Node* findNodeRecursive(unsigned char, Node*);
         Node* splitNYT();
-        Node* addSymbol(char);
+        Node* addSymbol(unsigned char);
         void switchNodes(Node*, Node*);
         void switchNodes2(Node*, Node*);
         void blockSwitch(Node*);
@@ -41,9 +41,9 @@ class AdaptiveHuffmanModel {
         AdaptiveHuffmanModel(bool);
         ~AdaptiveHuffmanModel();
 
-        std::string encode(char);
+        std::string encode(unsigned char);
         std::string decode(std::string);
-        void updateModel(char);
+        void updateModel(unsigned char);
 };
 
 #endif

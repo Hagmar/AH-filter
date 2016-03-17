@@ -82,7 +82,6 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findMaxInBlock(unsigned int we
     return findMaxInBlockRecursive(weight, root, 0);
 }
 
-//UNTESTED
 AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findMaxInBlockRecursive(unsigned int weight, AdaptiveHuffmanModel::Node* currNode, unsigned char bestNum){
     if (!currNode){
         return NULL;
@@ -237,6 +236,7 @@ std::string AdaptiveHuffmanModel::decode(std::string message) {
     return decodedMessage;
 }
 
+// TODO Make invariant
 void AdaptiveHuffmanModel::updateModel(unsigned char c) {
     Node* currNode = findNode(c);
     if (!currNode){
@@ -248,5 +248,27 @@ void AdaptiveHuffmanModel::updateModel(unsigned char c) {
     while (currNode != root){
         currNode = currNode->parent;
         blockSwitch(currNode);
+    }
+    printTree(root, 0);
+}
+
+void AdaptiveHuffmanModel::printTree(AdaptiveHuffmanModel::Node* node, int indent) {
+    if (!indent){
+        std::cout << std::endl;
+    }
+    for (int i = 0; i < indent; i++){
+        std::cout << "  ";
+    }
+    std::cout << "Number: " << (int) node->number << "  " << "Weight: " << node->weight << "  Symbol: ";
+    if (node->symbol){
+        std::cout << node->symbol << std::endl;
+    } else {
+        std::cout << "null" << std::endl;
+    }
+    if (node->rchild) {
+        printTree(node->rchild, indent+1);
+    }
+    if (node->lchild) {
+        printTree(node->lchild, indent+1);
     }
 }

@@ -44,6 +44,7 @@ class AdaptiveHuffmanModel {
         std::string encode(unsigned char);
         std::string decode(std::string);
         void updateModel(unsigned char);
+        void printTree(Node*, int);
 };
 
 #endif

@@ -31,7 +31,6 @@ class AdaptiveHuffmanModel {
         Node* splitNYT();
         Node* addSymbol(unsigned char);
         void switchNodes(Node*, Node*);
-        void switchNodes2(Node*, Node*);
         void blockSwitch(Node*);
         Node* findMaxInBlock(unsigned int);
         Node* findMaxInBlockRecursive(unsigned int, Node*, unsigned char);

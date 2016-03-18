@@ -143,27 +143,6 @@ void AdaptiveHuffmanModel::switchNodes(Node* node1, Node* node2){
     }
 }
 
-// Switches nodes by swapping children and symbol
-// In effect switches the pointers
-void AdaptiveHuffmanModel::switchNodes2(Node* node1, Node* node2){
-    unsigned char tempSymbol = node1->symbol;
-    Node* tempLChild = node1->lchild;
-    Node* tempRChild = node1->rchild;
-
-    node1->symbol = node2->symbol;
-    node1->lchild = node2->lchild;
-    node1->lchild->parent = node1;
-    node1->rchild = node2->rchild;
-    node1->rchild->parent = node1;
-
-    node2->symbol = tempSymbol;
-    node2->lchild = tempLChild;
-    node2->lchild->parent = node2;
-    node2->rchild = tempRChild;
-    node2->rchild->parent = node2;
-}
-
-
 void AdaptiveHuffmanModel::blockSwitch(Node* node){
     Node* maxBlockNode = findMaxInBlock(node->weight);
     if (node != maxBlockNode && maxBlockNode != node->parent){

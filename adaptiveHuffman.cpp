@@ -15,10 +15,14 @@ void AdaptiveHuffmanModel::Construct(bool s) {
     root = new Node();
     nyt = root;
     root->number = 255;
+    startBlock = new Block(false);
+    startBlock->leader = nyt;
+    startBlock->tail = nyt;
 }
 
 AdaptiveHuffmanModel::~AdaptiveHuffmanModel() {
     delete root;
+    delete startBlock;
 }
 
 AdaptiveHuffmanModel::Node::Node() {
@@ -35,6 +39,8 @@ void AdaptiveHuffmanModel::Node::Construct(unsigned int w) {
     lchild = NULL;
     rchild = NULL;
     parent = NULL;
+    next = NULL;
+    prev = NULL;
 }
 
 AdaptiveHuffmanModel::Node::~Node(){
@@ -44,6 +50,23 @@ AdaptiveHuffmanModel::Node::~Node(){
     if (rchild) {
         delete rchild;
     }
+}
+
+AdaptiveHuffmanModel::Block::Block(){
+    Construct(true);
+}
+
+AdaptiveHuffmanModel::Block::Block(bool intern){
+    Construct(intern);
+}
+
+void AdaptiveHuffmanModel::Block::Construct(bool intern){
+    internal = intern;
+    weight = 0;
+    next = NULL;
+    prev = NULL;
+    leader = NULL;
+    tail = NULL;
 }
 
 AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::splitNYT() {

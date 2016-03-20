@@ -13,16 +13,36 @@ class AdaptiveHuffmanModel {
             Node* parent;
             Node* lchild;
             Node* rchild;
+            Node* next;
+            Node* prev;
 
             Node();
             Node(unsigned int);
             ~Node();
+    };
+    class Block {
+        private:
+            void Construct(bool);
+
+        public:
+            bool internal;
+            unsigned int weight;
+            Block* next;
+            Block* prev;
+            Node* leader;
+            Node* tail;
+
+            Block();
+            Block(bool);
+
+            bool isEmpty();
     };
     private:
         bool split;
 
         Node* root;
         Node* nyt;
+        Block* startBlock;
 
         void Construct(bool);
 

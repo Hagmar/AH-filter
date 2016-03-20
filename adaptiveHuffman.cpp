@@ -15,12 +15,12 @@ void AdaptiveHuffmanModel::Construct(bool s) {
     root = new Node();
     nyt = root;
     root->number = 255;
-    startBlock = new Block(false);
+    startBlock = new Block(false, 0);
     startBlock->leader = root;
     startBlock->tail = root;
     root->block = startBlock;
 
-    Block* zeroInternalBlock = new Block(true);
+    Block* zeroInternalBlock = new Block(true, 0);
     startBlock->next = zeroInternalBlock;
     zeroInternalBlock->prev = startBlock;
 }
@@ -59,16 +59,20 @@ AdaptiveHuffmanModel::Node::~Node(){
 }
 
 AdaptiveHuffmanModel::Block::Block(){
-    Construct(true);
+    Construct(true, 0);
 }
 
 AdaptiveHuffmanModel::Block::Block(bool intern){
-    Construct(intern);
+    Construct(intern, 0);
 }
 
-void AdaptiveHuffmanModel::Block::Construct(bool intern){
+AdaptiveHuffmanModel::Block::Block(bool intern, unsigned int w){
+    Construct(intern, w);
+}
+
+void AdaptiveHuffmanModel::Block::Construct(bool intern, unsigned int w){
     internal = intern;
-    weight = 0;
+    weight = w;
     next = NULL;
     prev = NULL;
     leader = NULL;
@@ -182,12 +186,62 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findMaxInBlockRecursive(unsign
     return returnNode;
 }
 
+AdaptiveHuffmanModel::Block* AdaptiveHuffmanModel::insertNodeIntoBlock(Node* node, bool internal){
+    Block* currBlock = startBlock;
+    while (currBlock->weight != node->weight){
+        if (!currBlock->next){
+            Block* temp = new Block(internal, node->weight);
+            temp->prev = currBlock;
+            currBlock->next = temp;
+
+            currBlock = temp;
+            break;
+        } else {
+            currBlock = currBlock->next;
+            if (currBlock->weight > node->weight){
+                Block* temp = new Block(internal, node->weight);
+                temp->next = currBlock;
+                temp->prev = currBlock->prev;
+                currBlock->prev->next = temp;
+                curr->prev = temp;
+
+                currBlock = temp;
+                break;
+            }
+        }
+    }
+
+    if (node->block){
+        node->block->remove(node);
+    }
+
+    currBlock->insert(node);
+    return currBlock;
+}
+
 AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::addSymbol(unsigned char c){
     Node* newLeaf = splitNYT();
     newLeaf->weight = 1;
     newLeaf->symbol = c;
 
+    Block* newLeafBlock = newLeaf->block->next;
+    newLeaf->block->remove(newLeaf);
+
+    if (newLeafBlock){
+        if (startBlock->weight != 1 || startBlock->internal){
+            Block* temp = new Block(false, 1);
+            temp->next = newLeafBlock;
+            newLeafBlock->prev->next = temp;
+        } else {
+            newLeafBlock->insert(newLeaf);
+        }
+    } else {
+        newLeafBlock = new Block(false, 1);
+        newLeafBlock = newLeaf->block;
+
+
     newLeaf->parent->weight = 1;
+
     return newLeaf->parent;
 }
 

@@ -27,6 +27,7 @@ void AHDecodeFilter::filter(int argc, char** argv) {
 void AHDecodeFilter::process(std::string line){
     AdaptiveHuffmanModel* model = new AdaptiveHuffmanModel(split);
     std::cout << model->decode(line) << std::endl;
+    delete model;
 }
 
 int main( int argc, char** argv ) {

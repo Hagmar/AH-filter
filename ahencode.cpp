@@ -36,6 +36,7 @@ void AHEncodeFilter::process(std::string line){
             std::cout << " ";
         }
     }
+    delete model;
     std::cout << std::endl;
 }
 

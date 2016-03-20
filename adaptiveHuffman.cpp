@@ -105,6 +105,7 @@ void AdaptiveHuffmanModel::Block::remove(Node* node){
     if (tail == node){
         tail = node->next;
     }
+    node->block = NULL;
     node->prev = NULL;
     node->next = NULL;
 }
@@ -187,7 +188,8 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findMaxInBlockRecursive(unsign
 }
 
 // TODO Untested
-AdaptiveHuffmanModel::Block* AdaptiveHuffmanModel::insertNodeIntoBlock(Node* node, bool internal){
+AdaptiveHuffmanModel::Block* AdaptiveHuffmanModel::insertNodeIntoBlock(Node* node){
+    bool internal = (node->lchild || node->rchild);
     Block* currBlock = startBlock;
     while (currBlock->weight != node->weight){
         if (!currBlock->next){
@@ -227,11 +229,11 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::addSymbol(unsigned char c){
     newLeaf->symbol = c;
 
     newLeaf->block->remove(newLeaf);
-    insertNodeIntoBlock(newLeaf, false);
+    insertNodeIntoBlock(newLeaf);
 
     newLeaf->parent->weight = 1;
     newLeaf->parent->block->remove(newLeaf->parent);
-    insertNodeIntoBlock(newLeaf->parent, true);
+    insertNodeIntoBlock(newLeaf->parent);
 
     return newLeaf->parent;
 }
@@ -343,10 +345,30 @@ void AdaptiveHuffmanModel::updateModel(unsigned char c) {
         currNode = currNode->parent;
         blockSwitch(currNode);
     }
-    printTree(root, 0);
+    printBlocks();
 }
 
-void AdaptiveHuffmanModel::printTree(AdaptiveHuffmanModel::Node* node, int indent) {
+void AdaptiveHuffmanModel::printBlocks(){
+    Block* block = startBlock;
+
+    std::cout << std::endl;
+    while (block){
+        std::cout << "Block weight: " << block->weight << " Internal: " << block->internal << " Members:"<< std::endl;
+        Node* node = block->tail;
+        while (node){
+            if (!node->symbol){
+                std::cout << "-" << " ";
+            } else {
+                std::cout << node->symbol << " ";
+            }
+            node = node->next;
+        }
+        std::cout << std::endl;
+        block = block->next;
+    }
+}
+
+void AdaptiveHuffmanModel::printTree(Node* node, int indent) {
     if (!indent){
         std::cout << std::endl;
     }

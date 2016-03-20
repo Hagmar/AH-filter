@@ -2,6 +2,7 @@
 #define ADAPTIVEHUFFMAN_H
 
 class AdaptiveHuffmanModel {
+    class Block;
     class Node {
         private:
             void Construct(unsigned int);
@@ -15,6 +16,7 @@ class AdaptiveHuffmanModel {
             Node* rchild;
             Node* next;
             Node* prev;
+            Block* block;
 
             Node();
             Node(unsigned int);
@@ -36,6 +38,8 @@ class AdaptiveHuffmanModel {
             Block(bool);
 
             bool isEmpty();
+            void insert(Node*);
+            void remove(Node*);
     };
     private:
         bool split;

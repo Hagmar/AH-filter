@@ -16,8 +16,13 @@ void AdaptiveHuffmanModel::Construct(bool s) {
     nyt = root;
     root->number = 255;
     startBlock = new Block(false);
-    startBlock->leader = nyt;
-    startBlock->tail = nyt;
+    startBlock->leader = root;
+    startBlock->tail = root;
+    root->block = startBlock;
+
+    Block* zeroInternalBlock = new Block(true);
+    startBlock->next = zeroInternalBlock;
+    zeroInternalBlock->prev = startBlock;
 }
 
 AdaptiveHuffmanModel::~AdaptiveHuffmanModel() {
@@ -41,6 +46,7 @@ void AdaptiveHuffmanModel::Node::Construct(unsigned int w) {
     parent = NULL;
     next = NULL;
     prev = NULL;
+    block = NULL;
 }
 
 AdaptiveHuffmanModel::Node::~Node(){
@@ -69,15 +75,56 @@ void AdaptiveHuffmanModel::Block::Construct(bool intern){
     tail = NULL;
 }
 
+void AdaptiveHuffmanModel::Block::insert(Node* node){
+    if (tail){
+        tail->prev = node;
+        node->next = tail;
+    }
+    if (!leader){
+        leader = node;
+    }
+
+    tail = node;
+    node->block = this;
+}
+
+void AdaptiveHuffmanModel::Block::remove(Node* node){
+    if (node->prev){
+        node->prev->next = node->next;
+    }
+    if (node->next){
+        node->next->prev = node->prev;
+    }
+    if (leader == node){
+        leader = node->prev;
+    }
+    if (tail == node){
+        tail = node->next;
+    }
+    node->prev = NULL;
+    node->next = NULL;
+}
+
 AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::splitNYT() {
     Node* newLeaf = new Node();
     nyt->rchild = newLeaf;
     newLeaf->parent = nyt;
     newLeaf->number = nyt->number-1;
+
     nyt->lchild = new Node();
     nyt->lchild->number = nyt->number-2;
     nyt->lchild->parent = nyt;
+
+    // Move the old NYT node from external 0-weight block to internal 0-weight
+    // block
+    nyt->block->remove(nyt);
+    startBlock->next->insert(nyt);
+
     nyt = nyt->lchild;
+
+    startBlock->insert(newLeaf);
+    startBlock->insert(nyt);
+
     return newLeaf;
 }
 

@@ -186,6 +186,7 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findMaxInBlockRecursive(unsign
     return returnNode;
 }
 
+// TODO Untested
 AdaptiveHuffmanModel::Block* AdaptiveHuffmanModel::insertNodeIntoBlock(Node* node, bool internal){
     Block* currBlock = startBlock;
     while (currBlock->weight != node->weight){
@@ -203,7 +204,7 @@ AdaptiveHuffmanModel::Block* AdaptiveHuffmanModel::insertNodeIntoBlock(Node* nod
                 temp->next = currBlock;
                 temp->prev = currBlock->prev;
                 currBlock->prev->next = temp;
-                curr->prev = temp;
+                currBlock->prev = temp;
 
                 currBlock = temp;
                 break;
@@ -219,28 +220,18 @@ AdaptiveHuffmanModel::Block* AdaptiveHuffmanModel::insertNodeIntoBlock(Node* nod
     return currBlock;
 }
 
+// TODO Untested
 AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::addSymbol(unsigned char c){
     Node* newLeaf = splitNYT();
     newLeaf->weight = 1;
     newLeaf->symbol = c;
 
-    Block* newLeafBlock = newLeaf->block->next;
     newLeaf->block->remove(newLeaf);
-
-    if (newLeafBlock){
-        if (startBlock->weight != 1 || startBlock->internal){
-            Block* temp = new Block(false, 1);
-            temp->next = newLeafBlock;
-            newLeafBlock->prev->next = temp;
-        } else {
-            newLeafBlock->insert(newLeaf);
-        }
-    } else {
-        newLeafBlock = new Block(false, 1);
-        newLeafBlock = newLeaf->block;
-
+    insertNodeIntoBlock(newLeaf, false);
 
     newLeaf->parent->weight = 1;
+    newLeaf->parent->block->remove(newLeaf->parent);
+    insertNodeIntoBlock(newLeaf->parent, true);
 
     return newLeaf->parent;
 }

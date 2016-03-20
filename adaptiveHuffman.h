@@ -24,7 +24,7 @@ class AdaptiveHuffmanModel {
     };
     class Block {
         private:
-            void Construct(bool);
+            void Construct(bool, unsigned int);
 
         public:
             bool internal;
@@ -36,6 +36,7 @@ class AdaptiveHuffmanModel {
 
             Block();
             Block(bool);
+            Block(bool, unsigned int);
 
             bool isEmpty();
             void insert(Node*);

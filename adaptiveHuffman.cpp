@@ -223,10 +223,13 @@ AdaptiveHuffmanModel::Block* AdaptiveHuffmanModel::insertNodeIntoBlock(Node* nod
 }
 
 // TODO Untested
+// TODO Clean up
 AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::addSymbol(unsigned char c){
     Node* newLeaf = splitNYT();
-    newLeaf->weight = 1;
+    //newLeaf->weight = 1;
     newLeaf->symbol = c;
+    
+    return newLeaf;
 
     newLeaf->block->remove(newLeaf);
     insertNodeIntoBlock(newLeaf);
@@ -332,8 +335,66 @@ std::string AdaptiveHuffmanModel::decode(std::string message) {
     return decodedMessage;
 }
 
+void AdaptiveHuffmanModel::updateModel(unsigned char c){
+    Node* leafToIncrement = NULL;
+    Node* currNode = findNode(c);
+
+    if (!currNode){
+        leafToIncrement = addSymbol(c);
+        currNode = leafToIncrement->parent;
+    } else {
+        currNode = currNode->block->leader;
+        if (currNode->parent->lchild == nyt){
+            leafToIncrement = currNode;
+            currNode = currNode->parent;
+        }
+    }
+
+    while (currNode != root){
+        currNode = slideAndIncrement(currNode);
+    }
+    if (leafToIncrement){
+        slideAndIncrement(leafToIncrement);
+    }
+}
+
+AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::slideAndIncrement(Node* node){
+    unsigned int weight = node->weight;
+    Block* block = node->block->next;
+
+}
+
+void AdaptiveHuffmanModel::shiftBlock(Block* block, Node* node){
+    Node* currNode = block->leader;
+    Node* prevNode = currNode->prev;
+    Node* tempParent = node->parent;
+
+    if (currNode->parent->rchild == currNode){
+        currNode->parent->rchild = node;
+    } else {
+        currNode->parent->lchild = node;
+    }
+    node->parent = currNode->parent;
+
+    while (currNode != block->tail){
+        if (prevNode->parent->rchild == prevNode){
+            prevNode->parent->rchild = currNode;
+        } else {
+            prevNode->parent->lchild = currNode;
+        }
+        currNode->parent = prevNode->parent;
+
+        currNode = prevNode;
+        prevNode = prevNode->prev;
+    }
+
+    currNode->parent = tempParent;
+}
+
+
+/*
 // TODO Make invariant
-void AdaptiveHuffmanModel::updateModel(unsigned char c) {
+void AdaptiveHuffmanModel::updateModel2(unsigned char c) {
     Node* currNode = findNode(c);
     if (!currNode){
         currNode = addSymbol(c);
@@ -347,6 +408,7 @@ void AdaptiveHuffmanModel::updateModel(unsigned char c) {
     }
     printBlocks();
 }
+*/
 
 void AdaptiveHuffmanModel::printBlocks(){
     Block* block = startBlock;

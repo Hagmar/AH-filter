@@ -393,7 +393,6 @@ void AdaptiveHuffmanModel::shiftBlock(Block* block, Node* node){
 
 
 /*
-// TODO Make invariant
 void AdaptiveHuffmanModel::updateModel2(unsigned char c) {
     Node* currNode = findNode(c);
     if (!currNode){

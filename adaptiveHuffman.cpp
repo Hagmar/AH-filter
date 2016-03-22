@@ -191,7 +191,8 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findMaxInBlockRecursive(unsign
 AdaptiveHuffmanModel::Block* AdaptiveHuffmanModel::insertNodeIntoBlock(Node* node){
     bool internal = (node->lchild || node->rchild);
     Block* currBlock = startBlock;
-    while (currBlock->weight != node->weight){
+
+    while (currBlock->weight < node->weight){
         if (!currBlock->next){
             Block* temp = new Block(internal, node->weight);
             temp->prev = currBlock;
@@ -199,23 +200,32 @@ AdaptiveHuffmanModel::Block* AdaptiveHuffmanModel::insertNodeIntoBlock(Node* nod
 
             currBlock = temp;
             break;
-        } else {
-            currBlock = currBlock->next;
-            if (currBlock->weight > node->weight){
-                Block* temp = new Block(internal, node->weight);
-                temp->next = currBlock;
-                temp->prev = currBlock->prev;
-                currBlock->prev->next = temp;
-                currBlock->prev = temp;
-
-                currBlock = temp;
-                break;
-            }
         }
+        currBlock = currBlock->next;
     }
 
     if (node->block){
         node->block->remove(node);
+    }
+
+    if (currBlock->weight == node->weight && internal && !currBlock->internal){
+        if (currBlock->next){
+            currBlock = currBlock->next;
+        } else {
+            Block* temp = new Block(internal, node->weight);
+            currBlock->next = temp;
+            temp->prev = currBlock;
+            currBlock = temp;
+        }
+    }
+    if (currBlock->weight > node->weight || (!internal && currBlock->internal)){
+        Block* temp = new Block(internal, node->weight);
+        temp->prev = currBlock->prev;
+        temp->prev->next = temp;
+        temp->next = currBlock;
+        currBlock->prev = temp;
+
+        currBlock = temp;
     }
 
     currBlock->insert(node);
@@ -363,16 +373,19 @@ void AdaptiveHuffmanModel::updateModel(unsigned char c){
     root->weight++;
     root->block->remove(root);
     insertNodeIntoBlock(root);
-    if (leafToIncrement && leafToIncrement->parent != root){
+    if (leafToIncrement){
         slideAndIncrement(leafToIncrement);
     }
+
+    printTree(root, 0);
+    printBlocks();
 }
 
 AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::slideAndIncrement(Node* node){
     Node* parent = node->parent;
     Block* block = node->block->next;
 
-    if (block){
+    if (block && parent != root){
         if ((!node->block->internal && block->internal && block->weight == node->weight) || (node->block->internal && !block->internal && block->weight == node->weight+1)){
             node->block->remove(node);
             if (block->leader){

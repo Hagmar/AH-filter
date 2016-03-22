@@ -243,24 +243,29 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::addSymbol(unsigned char c){
 
 // Switches the position of two nodes, while leaving the numbering intact
 void AdaptiveHuffmanModel::switchNodes(Node* node1, Node* node2){
-    unsigned char tempNum = node1->number;
-    Node* tempParent = node1->parent;
+    Node* tempNode = node1->parent;
 
-    node1->number = node2->number;
+    if (node2->parent->lchild == node2){
+        node2->parent->lchild = node1;
+    } else {
+        node2->parent->rchild = node1;
+    }
     node1->parent = node2->parent;
-    if (node1->parent->lchild == node2){
-        node1->parent->lchild = node1;
-    } else {
-        node1->parent->rchild = node1;
-    }
 
-    node2->number = tempNum;
-    node2->parent = tempParent;
-    if (tempParent->lchild == node1){
-        tempParent->lchild = node2;
+    if (tempNode->lchild == node1){
+        tempNode->lchild = node2;
     } else {
-        tempParent->rchild = node2;
+        tempNode->rchild = node2;
     }
+    node2->parent = tempNode;
+
+    tempNode = node1->next;
+    node1->next = node2->next;
+    node2->next = tempNode;
+
+    tempNode = node1->prev;
+    node1->prev = node2->prev;
+    node2->prev = tempNode;
 }
 
 void AdaptiveHuffmanModel::blockSwitch(Node* node){
@@ -343,6 +348,9 @@ void AdaptiveHuffmanModel::updateModel(unsigned char c){
         leafToIncrement = addSymbol(c);
         currNode = leafToIncrement->parent;
     } else {
+        if (currNode->block->leader != currNode){
+            switchNodes(currNode, currNode->block->leader);
+        }
         currNode = currNode->block->leader;
         if (currNode->parent->lchild == nyt){
             leafToIncrement = currNode;
@@ -359,11 +367,23 @@ void AdaptiveHuffmanModel::updateModel(unsigned char c){
 }
 
 AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::slideAndIncrement(Node* node){
-    unsigned int weight = node->weight;
+    Node* parent = node->parent;
     Block* block = node->block->next;
 
+    node->block->remove(node);
+    shiftBlock(block, node);
+
+    node->weight++;
+    insertNodeIntoBlock(node);
+
+    if (node->block->internal){
+        return parent;
+    } else {
+        return node->parent;
+    }
 }
 
+// TODO Untested
 void AdaptiveHuffmanModel::shiftBlock(Block* block, Node* node){
     Node* currNode = block->leader;
     Node* prevNode = currNode->prev;
@@ -388,6 +408,11 @@ void AdaptiveHuffmanModel::shiftBlock(Block* block, Node* node){
         prevNode = prevNode->prev;
     }
 
+    if (tempParent->rchild == node){
+        tempParent->rchild = currNode;
+    } else {
+        tempParent->lchild = currNode;
+    }
     currNode->parent = tempParent;
 }
 

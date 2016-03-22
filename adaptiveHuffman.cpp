@@ -376,9 +376,6 @@ void AdaptiveHuffmanModel::updateModel(unsigned char c){
     if (leafToIncrement){
         slideAndIncrement(leafToIncrement);
     }
-
-    printTree(root, 0);
-    printBlocks();
 }
 
 AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::slideAndIncrement(Node* node){
@@ -426,7 +423,7 @@ void AdaptiveHuffmanModel::shiftBlock(Block* block, Node* node){
         currNode->parent = prevNode->parent;
 
         currNode = prevNode;
-        prevNode = prevNode->prev;
+        prevNode = currNode->prev;
     }
 
     if (rchild){

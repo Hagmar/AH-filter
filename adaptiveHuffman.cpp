@@ -351,7 +351,6 @@ void AdaptiveHuffmanModel::updateModel(unsigned char c){
         if (currNode->block->leader != currNode){
             switchNodes(currNode, currNode->block->leader);
         }
-        currNode = currNode->block->leader;
         if (currNode->parent->lchild == nyt){
             leafToIncrement = currNode;
             currNode = currNode->parent;
@@ -361,7 +360,10 @@ void AdaptiveHuffmanModel::updateModel(unsigned char c){
     while (currNode != root){
         currNode = slideAndIncrement(currNode);
     }
-    if (leafToIncrement){
+    root->weight++;
+    root->block->remove(root);
+    insertNodeIntoBlock(root);
+    if (leafToIncrement && leafToIncrement->parent != root){
         slideAndIncrement(leafToIncrement);
     }
 }
@@ -370,8 +372,14 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::slideAndIncrement(Node* node){
     Node* parent = node->parent;
     Block* block = node->block->next;
 
-    node->block->remove(node);
-    shiftBlock(block, node);
+    if (block){
+        if ((!node->block->internal && block->internal && block->weight == node->weight) || (node->block->internal && !block->internal && block->weight == node->weight+1)){
+            node->block->remove(node);
+            if (block->leader){
+                shiftBlock(block, node);
+            }
+        }
+    }
 
     node->weight++;
     insertNodeIntoBlock(node);

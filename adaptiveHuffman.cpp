@@ -385,12 +385,10 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::slideAndIncrement(Node* node){
     Node* parent = node->parent;
     Block* block = node->block->next;
 
-    if (block && parent != root){
-        if ((!node->block->internal && block->internal && block->weight == node->weight) || (node->block->internal && !block->internal && block->weight == node->weight+1)){
-            node->block->remove(node);
-            if (block->leader){
-                shiftBlock(block, node);
-            }
+    if ((!node->block->internal && block->internal && block->weight == node->weight) || (node->block->internal && !block->internal && block->weight == node->weight+1)){
+        node->block->remove(node);
+        if (block->leader){
+            shiftBlock(block, node);
         }
     }
 
@@ -409,6 +407,8 @@ void AdaptiveHuffmanModel::shiftBlock(Block* block, Node* node){
     Node* currNode = block->leader;
     Node* prevNode = currNode->prev;
     Node* tempParent = node->parent;
+
+    bool rchild = tempParent->rchild == node;
 
     if (currNode->parent->rchild == currNode){
         currNode->parent->rchild = node;
@@ -429,7 +429,7 @@ void AdaptiveHuffmanModel::shiftBlock(Block* block, Node* node){
         prevNode = prevNode->prev;
     }
 
-    if (tempParent->rchild == node){
+    if (rchild){
         tempParent->rchild = currNode;
     } else {
         tempParent->lchild = currNode;
@@ -482,7 +482,7 @@ void AdaptiveHuffmanModel::printTree(Node* node, int indent) {
     for (int i = 0; i < indent; i++){
         std::cout << "  ";
     }
-    std::cout << "Number: " << (int) node->number << "  " << "Weight: " << node->weight << "  Symbol: ";
+    std::cout << "Weight: " << node->weight << "  Symbol: ";
     if (node->symbol){
         std::cout << node->symbol << std::endl;
     } else {

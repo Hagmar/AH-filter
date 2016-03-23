@@ -14,7 +14,6 @@ void AdaptiveHuffmanModel::Construct(bool s) {
     split = s;
     root = new Node();
     nyt = root;
-    root->number = 255;
     startBlock = new Block(false, 0);
     startBlock->leader = root;
     startBlock->tail = root;
@@ -114,10 +113,8 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::splitNYT() {
     Node* newLeaf = new Node();
     nyt->rchild = newLeaf;
     newLeaf->parent = nyt;
-    newLeaf->number = nyt->number-1;
 
     nyt->lchild = new Node();
-    nyt->lchild->number = nyt->number-2;
     nyt->lchild->parent = nyt;
 
     // Move the old NYT node from external 0-weight block to internal 0-weight
@@ -151,40 +148,6 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findNodeRecursive(unsigned cha
         return returnNode;
     }
     return findNodeRecursive(c, node->lchild);
-}
-
-AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findMaxInBlock(unsigned int weight){
-    return findMaxInBlockRecursive(weight, root, 0);
-}
-
-AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findMaxInBlockRecursive(unsigned int weight, AdaptiveHuffmanModel::Node* currNode, unsigned char bestNum){
-    if (!currNode){
-        return NULL;
-    }
-
-    if (currNode->weight == weight){
-        return currNode;
-    } else if (currNode->weight < weight || currNode->number < bestNum){
-        return NULL;
-    }
-
-    Node* returnNode = NULL;
-    Node* rightNode = findMaxInBlockRecursive(weight, currNode->rchild, bestNum);
-    if (rightNode){
-        if (rightNode->number > bestNum){
-            returnNode = rightNode;
-            bestNum = rightNode->number;
-        }
-    }
-
-    Node* leftNode = findMaxInBlockRecursive(weight, currNode->lchild, bestNum);
-    if (leftNode){
-        if (leftNode->number > bestNum){
-            return leftNode;
-        }
-    }
-
-    return returnNode;
 }
 
 // TODO Untested
@@ -251,7 +214,7 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::addSymbol(unsigned char c){
     return newLeaf->parent;
 }
 
-// Switches the position of two nodes, while leaving the numbering intact
+// Switches the position of two nodes
 void AdaptiveHuffmanModel::switchNodes(Node* node1, Node* node2){
     Node* tempNode = node1->parent;
 
@@ -276,14 +239,6 @@ void AdaptiveHuffmanModel::switchNodes(Node* node1, Node* node2){
     tempNode = node1->prev;
     node1->prev = node2->prev;
     node2->prev = tempNode;
-}
-
-void AdaptiveHuffmanModel::blockSwitch(Node* node){
-    Node* maxBlockNode = findMaxInBlock(node->weight);
-    if (node != maxBlockNode && maxBlockNode != node->parent){
-        switchNodes(node, maxBlockNode);
-    }
-    node->weight++;
 }
 
 std::string AdaptiveHuffmanModel::encode(unsigned char c){
@@ -433,24 +388,6 @@ void AdaptiveHuffmanModel::shiftBlock(Block* block, Node* node){
     }
     currNode->parent = tempParent;
 }
-
-
-/*
-void AdaptiveHuffmanModel::updateModel2(unsigned char c) {
-    Node* currNode = findNode(c);
-    if (!currNode){
-        currNode = addSymbol(c);
-    } else {
-        blockSwitch(currNode);
-    }
-
-    while (currNode != root){
-        currNode = currNode->parent;
-        blockSwitch(currNode);
-    }
-    printBlocks();
-}
-*/
 
 void AdaptiveHuffmanModel::printBlocks(){
     Block* block = startBlock;

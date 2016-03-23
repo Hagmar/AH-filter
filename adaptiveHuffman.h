@@ -10,7 +10,6 @@ class AdaptiveHuffmanModel {
         public:
             unsigned int weight;
             unsigned char symbol;
-            unsigned char number;
             Node* parent;
             Node* lchild;
             Node* rchild;
@@ -56,9 +55,6 @@ class AdaptiveHuffmanModel {
         Node* splitNYT();
         Node* addSymbol(unsigned char);
         void switchNodes(Node*, Node*);
-        void blockSwitch(Node*);
-        Node* findMaxInBlock(unsigned int);
-        Node* findMaxInBlockRecursive(unsigned int, Node*, unsigned char);
         Block* insertNodeIntoBlock(Node*);
         std::string nodeToString(Node*);
         void shiftBlock(Block*, Node*);

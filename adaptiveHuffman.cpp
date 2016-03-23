@@ -218,27 +218,59 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::addSymbol(unsigned char c){
 void AdaptiveHuffmanModel::switchNodes(Node* node1, Node* node2){
     Node* tempNode = node1->parent;
 
-    if (node2->parent->lchild == node2){
-        node2->parent->lchild = node1;
-    } else {
+    bool rchild = tempNode->rchild == node1;
+
+    if (node2->parent->rchild == node2){
         node2->parent->rchild = node1;
+    } else {
+        node2->parent->lchild = node1;
     }
     node1->parent = node2->parent;
 
-    if (tempNode->lchild == node1){
-        tempNode->lchild = node2;
-    } else {
+    if (rchild){
         tempNode->rchild = node2;
+    } else {
+        tempNode->lchild = node2;
     }
     node2->parent = tempNode;
 
-    tempNode = node1->next;
-    node1->next = node2->next;
-    node2->next = tempNode;
 
-    tempNode = node1->prev;
-    node1->prev = node2->prev;
-    node2->prev = tempNode;
+
+
+    if (node2->next == node1){
+        tempNode = node1;
+        node1 = node2;
+        node2 = node1;
+    }
+
+    if (node1->next == node2){
+        node1->next = node2->next;
+        node2->prev = node1->prev;
+        node1->prev = node2;
+        node2->next = node1;
+    } else {
+        tempNode = node1->next;
+        node1->next = node2->next;
+        node2->next = tempNode;
+
+        tempNode = node1->prev;
+        node1->prev = node2->prev;
+        node2->prev = tempNode;
+
+        if (node2->next){
+            node2->next->prev = node2;
+        }
+        if (node1->prev){
+            node1->prev->next = node1;
+        }
+    }
+
+    if (node2->prev){
+        node2->prev->next = node2;
+    }
+    if (node1->next){
+        node1->next->prev = node1;
+    }
 }
 
 std::string AdaptiveHuffmanModel::encode(unsigned char c){

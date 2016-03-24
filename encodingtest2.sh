@@ -1,3 +1,13 @@
+# Requirements: ahencode and ahdecode in the working directory
+# Run the script to begin testing. If the only output is periods,
+# your programs are working together
+
+# ./ahencodingtest.sh [-s] [N [BS]]
+# If -s is provided, it will be passed to the encoder and decoder as well
+# If N is provided, only N tests will be run
+# If BS is provided, the test will generate and test with files
+# with BS number of bytes (default 512)
+
 function encodetest {
     # Create a test file with random data, removing null bytes
     dd if=/dev/urandom bs="$bs" count=1 2>/dev/null | tr -d '\000' > encodingtest.data

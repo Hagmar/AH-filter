@@ -220,6 +220,7 @@ void AdaptiveHuffmanModel::switchNodes(Node* node1, Node* node2){
 
     bool rchild = tempNode->rchild == node1;
 
+    // Switch the two nodes' parents
     if (node2->parent->rchild == node2){
         node2->parent->rchild = node1;
     } else {
@@ -235,14 +236,16 @@ void AdaptiveHuffmanModel::switchNodes(Node* node1, Node* node2){
     node2->parent = tempNode;
 
 
-
-
+    // Swap the two pointers to always have node1 precede node2 if they follow
+    // each other in a block
     if (node2->next == node1){
         tempNode = node1;
         node1 = node2;
         node2 = node1;
     }
 
+
+    // Update the block linked list
     if (node1->next == node2){
         node1->next = node2->next;
         node2->prev = node1->prev;
@@ -270,6 +273,19 @@ void AdaptiveHuffmanModel::switchNodes(Node* node1, Node* node2){
     }
     if (node1->next){
         node1->next->prev = node1;
+    }
+
+
+    // Update the block's leader and tail pointers
+    if (node1->block->leader == node1){
+        node1->block->leader = node2;
+    } else if (node2->block->leader == node2){
+        node2->block->leader = node1;
+    }
+    if (node1->block->tail == node1){
+        node1->block->tail = node2;
+    } else if (node2->block->tail == node2){
+        node2->block->tail = node1;
     }
 }
 

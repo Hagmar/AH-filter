@@ -26,7 +26,7 @@ void AdaptiveHuffmanModel::Construct(bool s) {
 
 AdaptiveHuffmanModel::~AdaptiveHuffmanModel() {
     delete root;
-    delete startBlock;
+    deleteAllBlocks();
 }
 
 AdaptiveHuffmanModel::Node::Node() {

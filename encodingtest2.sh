@@ -11,7 +11,10 @@
 function encodetest {
     # Create a test file with random data, removing null bytes
     dd if=/dev/urandom bs="$bs" count=1 2>/dev/null | tr -d '\000' > encodingtest.data
-    ./ahencode $space < encodingtest.data | ./ahdecode $space | diff -Z - encodingtest.data
+    # Add a newline to test data
+    echo >> encodingtest.data
+    # Encode, decode and compare to input data
+    ./ahencode $space < encodingtest.data | ./ahdecode $space | diff - encodingtest.data
 }
 
 if [ $# -gt 0 -a "$1" = "-s" ]; then

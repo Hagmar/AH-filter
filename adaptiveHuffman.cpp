@@ -78,6 +78,30 @@ void AdaptiveHuffmanModel::Block::Construct(bool intern, unsigned int w){
     tail = NULL;
 }
 
+AdaptiveHuffmanModel::Block::~Block(){
+    if (next){
+        next->prev = prev;
+    }
+    if (prev){
+        prev->next = next;
+    }
+    Node* node = tail;
+    while (tail){
+        tail->block = NULL;
+        tail = tail->next;
+    }
+}
+
+void AdaptiveHuffmanModel::deleteAllBlocks(){
+    Block* block = startBlock;
+    Block* nextBlock;
+    while (block){
+        nextBlock = block->next;
+        delete block;
+        block = nextBlock;
+    }
+}
+
 void AdaptiveHuffmanModel::Block::insert(Node* node){
     if (tail){
         tail->prev = node;

@@ -34,6 +34,7 @@ class AdaptiveHuffmanModel {
             Node* tail;
 
             Block();
+            ~Block();
             Block(bool);
             Block(bool, unsigned int);
 
@@ -49,6 +50,7 @@ class AdaptiveHuffmanModel {
         Block* startBlock;
 
         void Construct(bool);
+        void deleteAllBlocks();
 
         Node* findNode(unsigned char);
         Node* findNodeRecursive(unsigned char, Node*);

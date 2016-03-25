@@ -274,7 +274,8 @@ void AdaptiveHuffmanModel::switchNodes(Node* node1, Node* node2){
     node2->lchild = tempNode;
 }
 
-
+// Takes a character c and returns the string of 1's and 0's resulting from
+// encoding it with the current Huffman tree
 std::string AdaptiveHuffmanModel::encode(unsigned char c){
     std::string output = "";
     Node* node = findNode(c);
@@ -289,6 +290,8 @@ std::string AdaptiveHuffmanModel::encode(unsigned char c){
     return output;
 }
 
+// Returns the string of 1's and 0's corresponding to a node in the tree
+// A 1 means advancing to a node's right child and a 0 means the left
 std::string AdaptiveHuffmanModel::nodeToString(AdaptiveHuffmanModel::Node* node){
     std::string output = "";
 
@@ -300,6 +303,16 @@ std::string AdaptiveHuffmanModel::nodeToString(AdaptiveHuffmanModel::Node* node)
     return output;
 }
 
+// Reads an input string character by character and decodes its contained
+// message
+// Navigation always starts in the root node, progressing to the right child
+// with 1's and the left with 0's. Once a leaf node is found, one of two
+// things happen:
+//  - If the leaf node is the NYT node, then the next eight bits will be
+//      the binary representation of a new character. Read them, output the
+//      character, then reset the current node to the root
+//  - Otherwise, output the symbol corresponding to that node and reset the
+//      current node to the root
 std::string AdaptiveHuffmanModel::decode(std::string message) {
     Node* currNode = root;
     std::string::iterator it = message.begin();
@@ -309,6 +322,8 @@ std::string AdaptiveHuffmanModel::decode(std::string message) {
 
     while (it != message.end()){
         if (currNode == nyt){
+            // Read 8 more characters and interpret them as the bit pattern
+            // of an unsigned char
             decodedChar = 0;
             for (unsigned char i = 0; i < 8; i++){
                 bitChar = *it++;
@@ -321,6 +336,7 @@ std::string AdaptiveHuffmanModel::decode(std::string message) {
             updateModel(decodedChar);
             currNode = root;
         } else {
+            // Navigate through the tree depending on the current bit
             bitChar = *it++;
             if (bitChar == '1'){
                 currNode = currNode->rchild;
@@ -339,6 +355,7 @@ std::string AdaptiveHuffmanModel::decode(std::string message) {
     return decodedMessage;
 }
 
+// Update the Huffman tree with a new character
 void AdaptiveHuffmanModel::updateModel(unsigned char c){
     Node* leafToIncrement = NULL;
     Node* currNode = findNode(c);
@@ -348,6 +365,7 @@ void AdaptiveHuffmanModel::updateModel(unsigned char c){
         currNode = leafToIncrement->parent;
     } else {
         if (currNode->block->leader != currNode){
+            // Swap the current node with the leader of its block in the tree
             switchNodes(currNode, currNode->block->leader);
             currNode = currNode->block->leader;
         }
@@ -368,6 +386,7 @@ void AdaptiveHuffmanModel::updateModel(unsigned char c){
     }
 }
 
+// Slide a node through the Huffman tree as described in Vitter's paper
 AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::slideAndIncrement(Node* node){
     Node* parent = node->parent;
     Block* block = node->block->next;
@@ -389,7 +408,8 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::slideAndIncrement(Node* node){
     }
 }
 
-// TODO Untested
+// Shifts all the nodes in a block in the manner described by Vitter,
+// to maintain the invariant property
 void AdaptiveHuffmanModel::shiftBlock(Block* block, Node* node){
     Node* currNode = block->leader;
     Node* prevNode = currNode->prev;

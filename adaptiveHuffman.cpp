@@ -259,81 +259,21 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::addSymbol(unsigned char c){
     return newLeaf;
 }
 
-// Switches the position of two nodes in both the tree and the block
-// Pointers to children are maintained, but the nodes' parents change
+// Switches the position of two nodes in the tree and the block
 void AdaptiveHuffmanModel::switchNodes(Node* node1, Node* node2){
-    Node* tempNode = node1->parent;
+    unsigned char tempChar = node1->symbol;
+    node1->symbol = node2->symbol;
+    node2->symbol = tempChar;
 
-    bool rchild = tempNode->rchild == node1;
+    Node* tempNode = node1->rchild;
+    node1->rchild = node2->rchild;
+    node2->rchild = tempNode;
 
-    // Switch the two nodes' parents
-    if (node2->parent->rchild == node2){
-        node2->parent->rchild = node1;
-    } else {
-        node2->parent->lchild = node1;
-    }
-    node1->parent = node2->parent;
-
-    if (rchild){
-        tempNode->rchild = node2;
-    } else {
-        tempNode->lchild = node2;
-    }
-    node2->parent = tempNode;
-
-
-    // Swap the two pointers to always have node1 precede node2 if they follow
-    // each other in a block
-    if (node2->next == node1){
-        tempNode = node1;
-        node1 = node2;
-        node2 = node1;
-    }
-
-
-    // Update the block linked list
-    if (node1->next == node2){
-        node1->next = node2->next;
-        node2->prev = node1->prev;
-        node1->prev = node2;
-        node2->next = node1;
-    } else {
-        tempNode = node1->next;
-        node1->next = node2->next;
-        node2->next = tempNode;
-
-        tempNode = node1->prev;
-        node1->prev = node2->prev;
-        node2->prev = tempNode;
-
-        if (node2->next){
-            node2->next->prev = node2;
-        }
-        if (node1->prev){
-            node1->prev->next = node1;
-        }
-    }
-
-    if (node2->prev){
-        node2->prev->next = node2;
-    }
-    if (node1->next){
-        node1->next->prev = node1;
-    }
-
-
-    // Update the block's leader and tail pointers
-    if (node1->block->leader == node1){
-        node1->block->leader = node2;
-    } else if (node2->block->leader == node2){
-        node2->block->leader = node1;
-    }
-    if (node1->block->tail == node1){
-        node1->block->tail = node2;
-    } else if (node2->block->tail == node2){
-        node2->block->tail = node1;
-    }
+    tempNode = node1->lchild;
+    node1->lchild = node2->lchild;
+    node2->lchild = tempNode;
 }
+
 
 std::string AdaptiveHuffmanModel::encode(unsigned char c){
     std::string output = "";
@@ -409,6 +349,7 @@ void AdaptiveHuffmanModel::updateModel(unsigned char c){
     } else {
         if (currNode->block->leader != currNode){
             switchNodes(currNode, currNode->block->leader);
+            currNode = currNode->block->leader;
         }
         if (currNode->parent->lchild == nyt){
             leafToIncrement = currNode;

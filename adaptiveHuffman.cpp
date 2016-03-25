@@ -10,6 +10,9 @@ AdaptiveHuffmanModel::AdaptiveHuffmanModel(bool s) {
     Construct(s);
 }
 
+// Initializes a new Huffman model
+// New models only contain one node, the root of the tree
+// They start with two blocks, one internal and one external block of weight 0
 void AdaptiveHuffmanModel::Construct(bool s) {
     split = s;
     root = new Node();
@@ -48,6 +51,7 @@ void AdaptiveHuffmanModel::Node::Construct(unsigned int w) {
     block = NULL;
 }
 
+// When a node is deleted it also deletes all of its children
 AdaptiveHuffmanModel::Node::~Node(){
     if (lchild) {
         delete lchild;
@@ -78,6 +82,8 @@ void AdaptiveHuffmanModel::Block::Construct(bool intern, unsigned int w){
     tail = NULL;
 }
 
+// When a block is deleted it removes itself from the linked list of blocks
+// All of the block's nodes are also removed before deletion
 AdaptiveHuffmanModel::Block::~Block(){
     if (next){
         next->prev = prev;
@@ -86,12 +92,17 @@ AdaptiveHuffmanModel::Block::~Block(){
         prev->next = next;
     }
     Node* node = tail;
+    Node* temp;
     while (tail){
         tail->block = NULL;
-        tail = tail->next;
+        tail->prev = NULL;
+        temp = tail->next;
+        tail->next = NULL;
+        tail = temp;
     }
 }
 
+// Iterates through the list of blocks, deleting them one by one
 void AdaptiveHuffmanModel::deleteAllBlocks(){
     Block* block = startBlock;
     Block* nextBlock;
@@ -102,6 +113,8 @@ void AdaptiveHuffmanModel::deleteAllBlocks(){
     }
 }
 
+// Insert a node into a block
+// The node will be placed at the end of the block's list of nodes
 void AdaptiveHuffmanModel::Block::insert(Node* node){
     if (tail){
         tail->prev = node;
@@ -115,6 +128,7 @@ void AdaptiveHuffmanModel::Block::insert(Node* node){
     node->block = this;
 }
 
+// Remove a node from a block
 void AdaptiveHuffmanModel::Block::remove(Node* node){
     if (node->prev){
         node->prev->next = node->next;
@@ -133,6 +147,9 @@ void AdaptiveHuffmanModel::Block::remove(Node* node){
     node->next = NULL;
 }
 
+// Adds two children to the 0-weight NYT node and sets the new NYT to
+// the left one of these children
+// Returns the right child, which will be a new leaf for an encoded character
 AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::splitNYT() {
     Node* newLeaf = new Node();
     nyt->rchild = newLeaf;
@@ -148,12 +165,17 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::splitNYT() {
 
     nyt = nyt->lchild;
 
+    // Both new nodes are inserted into the starting block, since they are
+    // both leaves and have weight 0
     startBlock->insert(newLeaf);
     startBlock->insert(nyt);
 
     return newLeaf;
 }
 
+// Finds and returns the node correspending to a particular character, if it
+// exists. If not, returns NULL
+// TODO Change to search in lists
 AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findNode(unsigned char c){
     return findNodeRecursive(c, root);
 }
@@ -174,11 +196,15 @@ AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::findNodeRecursive(unsigned cha
     return findNodeRecursive(c, node->lchild);
 }
 
-// TODO Untested
+// Takes a node and inserts it into the block in which it belongs. The block
+// it belongs in is determined by the node's weight and whether it is internal
+// or a leaf
 AdaptiveHuffmanModel::Block* AdaptiveHuffmanModel::insertNodeIntoBlock(Node* node){
     bool internal = (node->lchild || node->rchild);
     Block* currBlock = startBlock;
 
+    // Find either the block preceeding the desired block, or create the
+    // desired one if it doesn't exist yet
     while (currBlock->weight < node->weight){
         if (!currBlock->next){
             Block* temp = new Block(internal, node->weight);
@@ -191,10 +217,16 @@ AdaptiveHuffmanModel::Block* AdaptiveHuffmanModel::insertNodeIntoBlock(Node* nod
         currBlock = currBlock->next;
     }
 
+    // Make sure the node is not already in another block
     if (node->block){
         node->block->remove(node);
     }
 
+    // Handle the three possible cases - currBlock is:
+    //  - The correct block
+    //  - The leaf block with the correct weight, but the desired one
+    //      is internal
+    //  - The internal block with correct weight, but the leaf is desired
     if (currBlock->weight == node->weight && internal && !currBlock->internal){
         if (currBlock->next){
             currBlock = currBlock->next;
@@ -219,26 +251,16 @@ AdaptiveHuffmanModel::Block* AdaptiveHuffmanModel::insertNodeIntoBlock(Node* nod
     return currBlock;
 }
 
-// TODO Untested
-// TODO Clean up
+// Splits the NYT node and assigns the new symbol to it
 AdaptiveHuffmanModel::Node* AdaptiveHuffmanModel::addSymbol(unsigned char c){
     Node* newLeaf = splitNYT();
-    //newLeaf->weight = 1;
     newLeaf->symbol = c;
     
     return newLeaf;
-
-    newLeaf->block->remove(newLeaf);
-    insertNodeIntoBlock(newLeaf);
-
-    newLeaf->parent->weight = 1;
-    newLeaf->parent->block->remove(newLeaf->parent);
-    insertNodeIntoBlock(newLeaf->parent);
-
-    return newLeaf->parent;
 }
 
-// Switches the position of two nodes
+// Switches the position of two nodes in both the tree and the block
+// Pointers to children are maintained, but the nodes' parents change
 void AdaptiveHuffmanModel::switchNodes(Node* node1, Node* node2){
     Node* tempNode = node1->parent;
 

@@ -3,6 +3,8 @@
 
 #include "filter.h"
 
+// Derived from the abstract Filter class. Overrides the process function
+// to apply adaptive Huffman decoding to all input
 class AHDecodeFilter: public Filter {
     private:
         bool split;

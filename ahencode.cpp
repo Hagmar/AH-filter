@@ -11,6 +11,7 @@ AHEncodeFilter::AHEncodeFilter(bool s) {
     split = s;
 }
 
+// Overrides the filter function to add support for the "-s" option
 void AHEncodeFilter::filter(int argc, char** argv) {
     if (argc <= 1 || (split && argc == 2)) {
         processFile("-");
@@ -24,6 +25,10 @@ void AHEncodeFilter::filter(int argc, char** argv) {
     std::cout.flush();
 }
 
+// The encoding filter's way of processing lines of input
+// Iterate through all characters in the line, encoding them with the current
+// Huffman tree and printing to stdout before updating the model with the new
+// character. Inserts spaces between encoded characters if "-s" is provided
 void AHEncodeFilter::process(std::string line){
     AdaptiveHuffmanModel* model = new AdaptiveHuffmanModel(split);
 
@@ -40,6 +45,8 @@ void AHEncodeFilter::process(std::string line){
     std::cout << std::endl;
 }
 
+// Determine whether to split encoded characters with a space, and then
+// process all input
 int main( int argc, char** argv ) {
     bool split = false;
     if (argc > 1){

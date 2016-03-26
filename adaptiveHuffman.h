@@ -72,8 +72,6 @@ class AdaptiveHuffmanModel {
         std::string nodeToString(Node*);
         void shiftBlock(Block*, Node*);
         Node* slideAndIncrement(Node*);
-        void printBlocks();
-        void printTree(Node*, int);
     public:
         AdaptiveHuffmanModel();
         AdaptiveHuffmanModel(bool);
